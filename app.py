@@ -2,7 +2,11 @@ import streamlit as st
 import re
 import smtplib
 from email.mime.text import MIMEText
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
+
+# Streamlit Cloud servers run on UTC time, not Indian time.
+# IST = UTC + 5 hours 30 minutes. We use this offset to show the correct local time.
+IST = timezone(timedelta(hours=5, minutes=30))
 
 # ------------------------------------------------------------------
 # RideTag / OwnrTag — v2
@@ -20,7 +24,7 @@ OWNER_DATA = {
     "owner_phone": "9590403444",
     # This is where the notification email actually gets delivered.
     # For testing, put YOUR OWN email here so you can see it arrive.
-    "owner_email": "verma.rashi210@gmail.com",
+    "owner_email": "PUT_OWNER_EMAIL_HERE@gmail.com",
 }
 
 PURPOSE_OPTIONS = [
@@ -51,7 +55,7 @@ Action: {action_type}
 Purpose: {purpose}
 Contacted by: {scanner_name if scanner_name else "Not provided"}
 Their phone number: {scanner_phone}
-Time: {datetime.now().strftime("%d-%b-%Y %I:%M %p")}
+Time: {datetime.now(IST).strftime("%d-%b-%Y %I:%M %p")} IST
 
 {"Message: " + message_text if message_text else ""}
 
