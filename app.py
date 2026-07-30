@@ -24,7 +24,7 @@ OWNER_DATA = {
     "owner_phone": "9590403444",
     # This is where the notification email actually gets delivered.
     # For testing, put YOUR OWN email here so you can see it arrive.
-    "owner_email": "verm.rashi210@gmail.com",
+    "owner_email": "verma.rashi210@gmail.com",
 }
 
 PURPOSE_OPTIONS = [
