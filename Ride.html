@@ -1,0 +1,223 @@
+!DOCTYPE html
+html lang=en
+head
+meta charset=UTF-8
+meta name=viewport content=width=device-width, initial-scale=1.0
+titleOwnrTag — Contact Vehicle Ownertitle
+link rel=preconnect href=httpsfonts.googleapis.com
+link rel=preconnect href=httpsfonts.gstatic.com crossorigin
+link href=httpsfonts.googleapis.comcss2family=Bebas+Neue&family=Oswaldwght@500;600&family=Interwght@400;500;600&display=swap rel=stylesheet
+style
+  root {
+    --ink #14171D; --panel #1B1F27; --panel-raised #21262F;
+    --chalk #F3F1E9; --amber #FFB020; --amber-ink #4A2E02;
+    --route #2E7D5B; --flare #E5484D; --muted #9AA0AE;
+    --hairline rgba(255,255,255,0.08);
+  }
+   { box-sizing border-box; }
+  html, body { margin 0; padding 0; background var(--ink); color var(--chalk); font-family 'Inter', sans-serif; min-height 100vh; }
+  .hazard-bar { height 6px; width 100%; background repeating-linear-gradient(-45deg, var(--amber) 0 10px, #14171D 10px 20px); }
+  #app { display flex; justify-content center; padding 28px 16px 60px; transition opacity 0.18s ease; }
+  .wrap { width 100%; max-width 380px; }
+  .brand { display flex; align-items center; justify-content center; gap 8px; margin-bottom 22px; color var(--amber); }
+  .brand-mark { font-family 'Oswald', sans-serif; font-weight 600; letter-spacing 0.1em; font-size 14px; text-transform uppercase; }
+  .route { display flex; align-items flex-start; justify-content center; margin-bottom 20px; }
+  .route-item { display flex; flex-direction column; align-items center; gap 6px; width 74px; }
+  .route-node { width 22px; height 22px; border-radius 50%; border 1px solid var(--hairline); display flex; align-items center; justify-content center; font-size 11px; color var(--muted); background var(--panel); }
+  .route-node.active { border-color var(--amber); color var(--amber-ink); background var(--amber); }
+  .route-node.done { border-color var(--route); color #fff; background var(--route); }
+  .route-label { font-size 10px; color var(--muted); text-align center; letter-spacing 0.02em; }
+  .route-line { flex 1; height 1px; background var(--hairline); margin-top 11px; }
+  .route-line.done { background var(--route); }
+  .card { background var(--panel); border-radius 16px; padding 26px 22px; border 1px solid var(--hairline); }
+  .plate { background #F7EFC8; color #14171D; border-radius 6px; border 3px solid #14171D; display flex; overflow hidden; margin 0 auto 12px; width 100%; max-width 280px; }
+  .plate-strip { background #1447E6; color #fff; font-family 'Oswald', sans-serif; font-size 10px; font-weight 600; writing-mode vertical-rl; display flex; align-items center; justify-content center; padding 6px 4px; letter-spacing 0.12em; }
+  .plate-number { flex 1; text-align center; font-family 'Bebas Neue', sans-serif; font-size 32px; letter-spacing 0.08em; padding 6px 8px; line-height 1; display flex; align-items center; justify-content center; }
+  .verified { display flex; align-items center; justify-content center; gap 6px; color var(--route); font-size 12px; font-weight 500; margin-bottom 16px; }
+  .sub { text-align center; color var(--muted); font-size 13px; margin 0 0 16px; }
+  .lead { text-align center; font-size 15px; line-height 1.55; margin 0 0 8px; }
+  .hint { text-align center; font-size 12px; color var(--muted); line-height 1.55; margin 0 0 22px; }
+  .h { font-family 'Oswald', sans-serif; font-weight 500; font-size 17px; margin 0 0 16px; }
+  .confirm { display flex; align-items center; gap 6px; font-size 12px; color var(--amber); margin 0 0 8px; }
+  .field { margin-bottom 14px; }
+  .field label { display block; font-size 12px; color var(--muted); margin-bottom 6px; }
+  input, select { width 100%; background var(--panel-raised); border 1px solid var(--hairline); border-radius 8px; color var(--chalk); padding 11px 12px; font-size 15px; font-family 'Inter', sans-serif; }
+  inputfocus, selectfocus, buttonfocus-visible, afocus-visible { outline 2px solid var(--amber); outline-offset 2px; }
+  .error { color var(--flare); font-size 13px; min-height 18px; margin -4px 0 10px; }
+  .btn { display flex; align-items center; justify-content center; gap 8px; width 100%; text-align center; text-decoration none; border-radius 10px; padding 14px 16px; font-size 15px; font-weight 600; margin-bottom 10px; border none; cursor pointer; font-family 'Inter', sans-serif; }
+  .btn.primary { background var(--amber); color var(--amber-ink); }
+  .btn.action { background var(--route); color #fff; }
+  .btn.danger { background var(--flare); color #fff; }
+  .link-back { display block; width 100%; background transparent; border none; color var(--muted); font-size 13px; padding 8px; cursor pointer; font-family 'Inter', sans-serif; text-decoration underline; text-underline-offset 3px; }
+  .ic { display inline-flex; }
+style
+base target=_blank
+head
+body
+div class=hazard-bar aria-hidden=truediv
+div id=appdiv
+
+script
+ ═══════════════════════════════════════════════════════════════
+   OWNER SETUP — EDIT THIS BLOCK ONLY
+   ═══════════════════════════════════════════════════════════════
+
+   Privacy note This info is NOT displayed to the person scanning.
+   It is only used to open WhatsApp when they click Notify Owner.
+
+   ownerWhatsApp Country code + number, digits only, no + or spaces.
+                  Example 919590403444 (India = 91)
+   ═══════════════════════════════════════════════════════════════ 
+const CONFIG = {
+  ownerName YOUR_NAME,            Not shown to scanner
+  ownerWhatsApp 91XXXXXXXXXX,     Hidden until WhatsApp opens
+  vehicleNickname YOUR_VEHICLE,
+  plateNumber XX XX XX XXXX
+};
+ ═══════════════════════════════════════════════════════════════ 
+
+const PURPOSES = [Vehicle Accident, Emergency, Wrong Parking, Others];
+const state = { step landing, name , phone , purpose PURPOSES[0] };
+
+function isValidPhone(v) { return ^[6-9]d{9}$.test(v); }
+
+function timestamp() {
+  return new Date().toLocaleString(en-IN, {
+    timeZone AsiaKolkata,
+    day 2-digit, month short, year numeric,
+    hour 2-digit, minute 2-digit
+  }) +  IST;
+}
+
+function waLink(actionType) {
+  const lines = [
+    `OwnrTag alert ${actionType}`,
+    `Vehicle ${CONFIG.vehicleNickname} (${CONFIG.plateNumber})`,
+    `Purpose ${state.purpose}`,
+    `From ${state.name  Not provided} (${state.phone})`,
+    `Time ${timestamp()}`
+  ];
+  return `httpswa.me${CONFIG.ownerWhatsApp}text=${encodeURIComponent(lines.join(n))}`;
+}
+
+function el(tag, attrs, children) {
+  const e = document.createElement(tag);
+  for (const k in attrs  {}) {
+    if (k === text) e.textContent = attrs[k];
+    else if (k === html) e.innerHTML = attrs[k];
+    else if (k.startsWith(on)) e.addEventListener(k.slice(2), attrs[k]);
+    else e.setAttribute(k, attrs[k]);
+  }
+  (children  []).forEach(c = c && e.appendChild(c));
+  return e;
+}
+
+const ICONS = {
+  bell 'svg viewBox=0 0 24 24 width=18 height=18 fill=none stroke=currentColor stroke-width=1.8 stroke-linecap=round stroke-linejoin=roundpath d=M12 3a5 5 0 0 0-5 5v3.3c0 .6-.2 1.2-.6 1.7L5 15h14l-1.4-2c-.4-.5-.6-1.1-.6-1.7V8a5 5 0 0 0-5-5Zpath d=M9.5 18a2.5 2.5 0 0 0 5 0svg',
+  flare 'svg viewBox=0 0 24 24 width=18 height=18 fill=none stroke=currentColor stroke-width=1.8 stroke-linecap=round stroke-linejoin=roundpath d=M12 2 8 9h3l-1 6 7-8h-4l1-5Zsvg',
+  tag 'svg viewBox=0 0 24 24 width=16 height=16 fill=none stroke=currentColor stroke-width=1.8 stroke-linecap=round stroke-linejoin=roundpath d=M3 3h8l10 10-8 8L3 11V3Zcircle cx=7.5 cy=7.5 r=1.2 fill=currentColor stroke=nonesvg',
+  check 'svg viewBox=0 0 24 24 width=14 height=14 fill=none stroke=currentColor stroke-width=2.2 stroke-linecap=round stroke-linejoin=roundpath d=M4 12.5 9 17 20 6svg'
+};
+function icon(name) { const span = document.createElement(span); span.className = ic; span.innerHTML = ICONS[name]; return span; }
+
+function plateGraphic() {
+  const plate = el(div, { class plate });
+  plate.appendChild(el(div, { class plate-strip }, [el(span, { text IND })]));
+  plate.appendChild(el(div, { class plate-number, text CONFIG.plateNumber }));
+  return plate;
+}
+
+function routeMeter(active) {
+  const wrap = el(div, { class route });
+  const labels = [Vehicle, Your details, Contact];
+  labels.forEach((label, i) = {
+    const n = i + 1;
+    const node = el(div, { class route-node + (n  active   done  n === active   active  ) });
+    node.appendChild(n  active  icon(check)  el(span, { text String(n) }));
+    const item = el(div, { class route-item }, [node, el(span, { class route-label, text label })]);
+    wrap.appendChild(item);
+    if (n  3) wrap.appendChild(el(div, { class route-line + (n  active   done  ) }));
+  });
+  return wrap;
+}
+
+function frame(card, activeStep) {
+  const wrap = el(div, { class wrap });
+  wrap.appendChild(el(div, { class brand }, [icon(tag), el(span, { class brand-mark, text OwnrTag })]));
+  wrap.appendChild(routeMeter(activeStep));
+  wrap.appendChild(card);
+  return wrap;
+}
+
+function viewLanding() {
+  const card = el(div, { class card });
+  card.appendChild(plateGraphic());
+  card.appendChild(el(div, { class verified }, [icon(check), el(span, { text Registered tag })]));
+  card.appendChild(el(p, { class sub, text CONFIG.vehicleNickname }));
+  card.appendChild(el(p, { class lead, text You're about to reach this vehicle's owner over WhatsApp. }));
+  card.appendChild(el(p, { class hint, text Your number goes to the owner. Theirs appears once WhatsApp opens — that's what lets the message send with no app or server in between. }));
+  card.appendChild(el(button, {
+    class btn primary, text Continue,
+    onclick () = { state.step = details; render(); }
+  }));
+  return frame(card, 1);
+}
+
+function labeled(label, input) {
+  return el(div, { class field }, [el(label, { text label }), input]);
+}
+
+function viewDetails() {
+  const card = el(div, { class card });
+  card.appendChild(el(h2, { class h, text Your details }));
+  const nameInput = el(input, { type text, placeholder e.g. Ramesh, value state.name });
+  const phoneInput = el(input, { type tel, placeholder 10-digit mobile number, maxlength 10, value state.phone });
+  const purposeSelect = el(select, {});
+  PURPOSES.forEach(p = purposeSelect.appendChild(el(option, { value p, text p })));
+  purposeSelect.value = state.purpose;
+  const error = el(p, { class error, text  });
+  card.appendChild(labeled(Name (optional), nameInput));
+  card.appendChild(labeled(Mobile number, phoneInput));
+  card.appendChild(labeled(Purpose, purposeSelect));
+  card.appendChild(error);
+  card.appendChild(el(button, {
+    class btn primary, text Continue,
+    onclick () = {
+      const phone = phoneInput.value.trim();
+      if (!isValidPhone(phone)) { error.textContent = Enter a valid 10-digit Indian mobile number.; return; }
+      state.name = nameInput.value.trim(); state.phone = phone; state.purpose = purposeSelect.value;
+      state.step = actions; render();
+    }
+  }));
+  card.appendChild(el(button, { class link-back, text Back, onclick () = { state.step = landing; render(); } }));
+  return frame(card, 2);
+}
+
+function viewActions() {
+  const card = el(div, { class card });
+  card.appendChild(el(p, { class confirm }, [icon(check), el(span, { text `${state.phone} · ${state.purpose}` })]));
+  card.appendChild(el(h2, { class h, text Choose how to reach them }));
+  card.appendChild(el(a, { class btn action, href waLink(Quick alert), target _blank }, [icon(bell), el(span, { text Notify owner on WhatsApp })]));
+  card.appendChild(el(a, { class btn danger, href waLink(EMERGENCY), target _blank }, [icon(flare), el(span, { text Emergency — notify now })]));
+  card.appendChild(el(button, {
+    class link-back, text Start over,
+    onclick () = { Object.assign(state, { step landing, name , phone , purpose PURPOSES[0] }); render(); }
+  }));
+  return frame(card, 3);
+}
+
+function render() {
+  const app = document.getElementById(app);
+  app.style.opacity = 0;
+  requestAnimationFrame(() = {
+    app.innerHTML = ;
+    if (state.step === landing) app.appendChild(viewLanding());
+    else if (state.step === details) app.appendChild(viewDetails());
+    else if (state.step === actions) app.appendChild(viewActions());
+    requestAnimationFrame(() = { app.style.opacity = 1; });
+  });
+}
+render();
+script
+body
+html
