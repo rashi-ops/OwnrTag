@@ -179,6 +179,7 @@ elif st.session_state.step == "access_page":
                 st.success(f"{OWNER_DATA['owner_name']} has been notified of your call request!")
             else:
                 st.error(msg)
+            st.caption(msg)  # always show the detailed SMS/Email breakdown for debugging
 
     with col2:
         if st.button("💬 Message Owner", use_container_width=True):
