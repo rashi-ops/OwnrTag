@@ -3,6 +3,7 @@ import re
 import smtplib
 from email.mime.text import MIMEText
 from datetime import datetime, timezone, timedelta
+from sms_utils import send_sms
 
 # Streamlit Cloud servers run on UTC time, not Indian time.
 # IST = UTC + 5 hours 30 minutes. We use this offset to show the correct local time.
@@ -17,15 +18,34 @@ IST = timezone(timedelta(hours=5, minutes=30))
 
 st.set_page_config(page_title="OwnrTag", page_icon="🚗", layout="centered")
 
-# ---- OWNER INFO (edit this per vehicle later; for now hardcoded) ----
-OWNER_DATA = {
-    "vehicle_nickname": "White Swift Dzire - DL 3C AB 1234",
-    "owner_name": "Mahendra",
-    "owner_phone": "9590403444",
-    # This is where the notification email actually gets delivered.
-    # For testing, put YOUR OWN email here so you can see it arrive.
-    "owner_email": "verma.rashi210@gmail.com",
+# ---- ALL VEHICLES/OWNERS LIVE HERE ----
+# One app, many customers. Each customer gets a unique "vehicle" ID.
+# To add a new customer: just add a new entry below with the next number.
+VEHICLES = {
+    "001": {
+        "vehicle_nickname": "White Swift Dzire - DL 3C AB 1234",
+        "owner_name": "Mahendra",
+        "owner_phone": "8306862533",
+        "owner_email": "verma.rashi210@gmail.com",
+    },
+    # "002": {
+    #     "vehicle_nickname": "Black Activa - DL 5S CD 5678",
+    #     "owner_name": "Customer 2 Name",
+    #     "owner_phone": "9XXXXXXXXX",
+    #     "owner_email": "customer2email@gmail.com",
+    # },
 }
+
+# ---- FIGURE OUT WHICH VEHICLE THIS SCAN IS FOR ----
+# Reads the "?vehicle=001" part from the URL that was encoded into the QR code
+query_params = st.query_params
+vehicle_id = query_params.get("vehicle", "001")  # defaults to "001" if missing
+
+if vehicle_id not in VEHICLES:
+    st.error("Invalid or unknown vehicle tag. Please check the QR code.")
+    st.stop()
+
+OWNER_DATA = VEHICLES[vehicle_id]
 
 PURPOSE_OPTIONS = [
     "Vehicle Accident",
@@ -41,6 +61,21 @@ PURPOSE_OPTIONS = [
 # Credentials are read from Streamlit secrets — NEVER written in this file directly.
 # ------------------------------------------------------------------
 def notify_owner(action_type, scanner_name, scanner_phone, purpose, message_text=""):
+    email_ok, email_msg = False, "Email not attempted"
+    sms_ok, sms_msg = False, "SMS not attempted"
+
+    # ---- Try SMS first (this is the urgent, real-time channel) ----
+    try:
+        sms_api_key = st.secrets["FAST2SMS_API_KEY"]
+        short_text = (f"OwnrTag Alert: {action_type} ({purpose}). "
+                      f"Contact: {scanner_phone}"
+                      f"{' - ' + scanner_name if scanner_name else ''}. "
+                      f"Vehicle: {OWNER_DATA['vehicle_nickname']}")
+        sms_ok, sms_msg = send_sms(sms_api_key, OWNER_DATA["owner_phone"], short_text)
+    except Exception as e:
+        sms_msg = f"SMS skipped: {e}"
+
+    # ---- Also send email as a backup record (in case SMS credits run out) ----
     try:
         sender_email = st.secrets["SENDER_EMAIL"]
         sender_password = st.secrets["SENDER_APP_PASSWORD"]
@@ -71,9 +106,16 @@ Time: {datetime.now(IST).strftime("%d-%b-%Y %I:%M %p")} IST
             server.login(sender_email, sender_password)
             server.send_message(msg)
 
-        return True, "Owner notified successfully."
+        email_ok = True
+        email_msg = "Email sent."
     except Exception as e:
-        return False, f"Notification failed: {e}"
+        email_msg = f"Email failed: {e}"
+
+    # ---- Overall result: success if AT LEAST ONE channel worked ----
+    if sms_ok or email_ok:
+        return True, f"Notified owner. SMS: {'✅' if sms_ok else '❌ ' + sms_msg} | Email: {'✅' if email_ok else '❌ ' + email_msg}"
+    else:
+        return False, f"Both channels failed. SMS: {sms_msg} | Email: {email_msg}"
 
 
 # ---- PHONE NUMBER FORMAT VALIDATION (no OTP, just format check) ----
